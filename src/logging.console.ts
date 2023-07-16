@@ -1,5 +1,6 @@
 import omit from 'lodash.omit'
 import zip from 'lodash.zip'
+
 import { ILogEntry, ILoggingSession, LogLevel, LogTagType } from './logging.types'
 
 export const levelClearsTreshold = (tresholdLevel: string, evaluatedLevel?: string) => {
@@ -29,38 +30,6 @@ export const getEntryLevel = (entry: ILogEntry) => {
   return entry.tags[LogTagType.Level]
 }
 
-export const defaultLookbackEntrySelector = (entries: ILogEntry[]) => {
-  const anyEntryClearsThreshold = entries.some((e) => levelClearsTreshold(defaultConfig.level, getEntryLevel(e)))
-  return anyEntryClearsThreshold ? entries : []
-}
-
-export const defaultPerformanceEntryCompactor = (entries: ILogEntry[]) => {
-  const performanceEndEntries = entries.filter((e) => e.tags[LogTagType.Level] === LogLevel.Performance && e.params.stage === 'end')
-  const performanceEntryPairs = performanceEndEntries.map((endEntry) => [
-    entries.find(
-      (possibleStartEntry) =>
-        possibleStartEntry.params.stage === 'start' && JSON.stringify(endEntry.tags) == JSON.stringify(possibleStartEntry.tags),
-    ),
-    endEntry,
-  ])
-  const entryPairsToCompact = performanceEntryPairs.filter(([startEntry, endEntry]) => !!startEntry)
-  if (!entryPairsToCompact) {
-    return entries
-  }
-  const compactedEntries = [...entries]
-  entryPairsToCompact.forEach(([startEntry, endEntry]) => {
-    compactedEntries.splice(compactedEntries.indexOf(endEntry), 1, {
-      tags: startEntry.tags,
-      createdOn: endEntry.createdOn,
-      params: omit({ ...startEntry.params, elapsed: endEntry.createdOn.valueOf() - startEntry.createdOn.valueOf(), ...endEntry.params }, [
-        'stage',
-      ]),
-      message: 'Performance calculation',
-    })
-  })
-  return compactedEntries
-}
-
 let defaultConfig: {
   level: any
   sessionFilter: (session: ILoggingSession) => boolean
@@ -83,6 +52,38 @@ let defaultConfig: {
     return `${entry.createdOn} | ${JSON.stringify(entry.tags)} | ${entry.message}`
   },
 })
+
+export const defaultLookbackEntrySelector = (entries: ILogEntry[]) => {
+  const anyEntryClearsThreshold = entries.some((e) => levelClearsTreshold(defaultConfig.level, getEntryLevel(e)))
+  return anyEntryClearsThreshold ? entries : []
+}
+
+export const defaultPerformanceEntryCompactor = (entries: ILogEntry[]) => {
+  const performanceEndEntries = entries.filter((e) => e.tags[LogTagType.Level] === LogLevel.Performance && e.params.stage === 'end')
+  const performanceEntryPairs = performanceEndEntries.map((endEntry) => [
+    entries.find(
+      (possibleStartEntry) =>
+        possibleStartEntry.params.stage === 'start' && JSON.stringify(endEntry.tags) == JSON.stringify(possibleStartEntry.tags),
+    ),
+    endEntry,
+  ])
+  const entryPairsToCompact = performanceEntryPairs.filter(([startEntry, _]) => !!startEntry)
+  if (!entryPairsToCompact) {
+    return entries
+  }
+  const compactedEntries = [...entries]
+  entryPairsToCompact.forEach(([startEntry, endEntry]) => {
+    compactedEntries.splice(compactedEntries.indexOf(endEntry), 1, {
+      tags: startEntry.tags,
+      createdOn: endEntry.createdOn,
+      params: omit({ ...startEntry.params, elapsed: endEntry.createdOn.valueOf() - startEntry.createdOn.valueOf(), ...endEntry.params }, [
+        'stage',
+      ]),
+      message: 'Performance calculation',
+    })
+  })
+  return compactedEntries
+}
 
 export const defaultConsoleConsumer = {
   session: (session: ILoggingSession) => {

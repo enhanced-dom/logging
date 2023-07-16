@@ -34,5 +34,4 @@ export class StreamingLogger implements ILogger {
   withTags(tags: ILogEntry['tags']): ILogger {
     return new StreamingLogger({ ...this._tags, ...tags }, this._consumers)
   }
-  flush() {}
 }

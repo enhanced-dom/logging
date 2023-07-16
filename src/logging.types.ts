@@ -18,7 +18,7 @@ export interface ILogger {
   log(...args: [ILogEntry['params'], ILogEntry['message']]): void
   log(...args: [ILogEntry['params']]): void
   withTags(tags: ILogEntry['tags']): ILogger
-  flush(): void
+  flush?: () => void
 }
 
 export enum LogTagType {

@@ -67,7 +67,7 @@ export const defaultPerformanceEntryCompactor = (entries: ILogEntry[]) => {
     ),
     endEntry,
   ])
-  const entryPairsToCompact = performanceEntryPairs.filter(([startEntry, _]) => !!startEntry)
+  const entryPairsToCompact = performanceEntryPairs.filter(([startEntry]) => !!startEntry)
   if (!entryPairsToCompact) {
     return entries
   }

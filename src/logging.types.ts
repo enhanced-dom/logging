@@ -22,22 +22,22 @@ export interface ILogger {
 }
 
 export enum LogTagType {
-  Level = 'level', // log level. e.g. info
-  Entity = 'entity', // entity/resource type e.g. User
-  Id = 'id', // entity/resource identifier e.g. 1234
-  Area = 'area', // application area e.g. controllers
-  Procedure = 'procedure', // code block/function e.g. getUserEntries
-  Step = 'step', // algorithm step e.g. filtering
+  LEVEL = 'level', // log level. e.g. info
+  ENTITY = 'entity', // entity/resource type e.g. User
+  ID = 'id', // entity/resource identifier e.g. 1234
+  AREA = 'area', // application area e.g. controllers
+  PROCEDURE = 'procedure', // code block/function e.g. getUserEntries
+  STEP = 'step', // algorithm step e.g. filtering
 }
 
 export enum LogLevel {
-  Fatal = 'fatal',
-  Critical = 'critical',
-  Error = 'error',
-  Warning = 'warn',
-  Performance = 'perf',
-  Info = 'info',
-  Debug = 'debug',
+  FATAL = 'fatal',
+  CRITICAL = 'critical',
+  ERROR = 'error',
+  WARNING = 'warn',
+  PERFORMANCE = 'perf',
+  INFO = 'info',
+  DEBUG = 'debug',
 }
 
 export type ILogConsumerType =

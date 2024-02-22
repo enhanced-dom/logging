@@ -25,12 +25,12 @@ describe('collector logger', () => {
     logger2 = logger2.withTags({ myothertag: 'beta' })
     const messagesList = [
       {
-        tags: { [LogTagType.Level]: LogLevel.Critical },
+        tags: { [LogTagType.LEVEL]: LogLevel.CRITICAL },
         message: 'aaa',
         params: {},
       },
       {
-        tags: { [LogTagType.Level]: LogLevel.Debug },
+        tags: { [LogTagType.LEVEL]: LogLevel.DEBUG },
         message: 'bbb',
         params: {},
       },

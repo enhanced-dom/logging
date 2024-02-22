@@ -5,20 +5,20 @@ import { ILogEntry, ILoggingSession, LogLevel, LogTagType } from './logging.type
 
 export const levelClearsTreshold = (tresholdLevel: string, evaluatedLevel?: string) => {
   switch (tresholdLevel) {
-    case LogLevel.Fatal:
-      return evaluatedLevel === LogLevel.Fatal
-    case LogLevel.Critical:
-      return [LogLevel.Fatal, LogLevel.Critical].includes(evaluatedLevel as LogLevel)
-    case LogLevel.Error:
-      return [LogLevel.Fatal, LogLevel.Critical, LogLevel.Error].includes(evaluatedLevel as LogLevel)
-    case LogLevel.Warning:
-      return [LogLevel.Fatal, LogLevel.Critical, LogLevel.Error, LogLevel.Warning].includes(evaluatedLevel as LogLevel)
-    case LogLevel.Performance:
-      return [LogLevel.Fatal, LogLevel.Critical, LogLevel.Error, LogLevel.Warning, LogLevel.Performance].includes(
+    case LogLevel.FATAL:
+      return evaluatedLevel === LogLevel.FATAL
+    case LogLevel.CRITICAL:
+      return [LogLevel.FATAL, LogLevel.CRITICAL].includes(evaluatedLevel as LogLevel)
+    case LogLevel.ERROR:
+      return [LogLevel.FATAL, LogLevel.CRITICAL, LogLevel.ERROR].includes(evaluatedLevel as LogLevel)
+    case LogLevel.WARNING:
+      return [LogLevel.FATAL, LogLevel.CRITICAL, LogLevel.ERROR, LogLevel.WARNING].includes(evaluatedLevel as LogLevel)
+    case LogLevel.PERFORMANCE:
+      return [LogLevel.FATAL, LogLevel.CRITICAL, LogLevel.ERROR, LogLevel.WARNING, LogLevel.PERFORMANCE].includes(
         evaluatedLevel as LogLevel,
       )
-    case LogLevel.Info:
-      return [LogLevel.Fatal, LogLevel.Critical, LogLevel.Error, LogLevel.Warning, LogLevel.Performance, LogLevel.Info].includes(
+    case LogLevel.INFO:
+      return [LogLevel.FATAL, LogLevel.CRITICAL, LogLevel.ERROR, LogLevel.WARNING, LogLevel.PERFORMANCE, LogLevel.INFO].includes(
         evaluatedLevel as LogLevel,
       )
     default:
@@ -27,7 +27,7 @@ export const levelClearsTreshold = (tresholdLevel: string, evaluatedLevel?: stri
 }
 
 export const getEntryLevel = (entry: ILogEntry) => {
-  return entry.tags[LogTagType.Level]
+  return entry.tags[LogTagType.LEVEL]
 }
 
 let defaultConfig: {
@@ -37,7 +37,7 @@ let defaultConfig: {
   sessionSerializer: (session: ILoggingSession) => string
   entrySerializer: (entry: ILogEntry) => string
 } = Object.freeze({
-  level: LogLevel.Error,
+  level: LogLevel.ERROR,
   sessionFilter: () => true,
   entryFilter: (entries) => entries.filter((e) => levelClearsTreshold(defaultConfig.level, getEntryLevel(e))),
   sessionSerializer: (session: ILoggingSession) => {
@@ -59,7 +59,7 @@ export const defaultLookbackEntrySelector = (entries: ILogEntry[]) => {
 }
 
 export const defaultPerformanceEntryCompactor = (entries: ILogEntry[]) => {
-  const performanceEndEntries = entries.filter((e) => e.tags[LogTagType.Level] === LogLevel.Performance && e.params.stage === 'end')
+  const performanceEndEntries = entries.filter((e) => e.tags[LogTagType.LEVEL] === LogLevel.PERFORMANCE && e.params.stage === 'end')
   const performanceEntryPairs = performanceEndEntries.map((endEntry) => [
     entries.find(
       (possibleStartEntry) =>

@@ -17,17 +17,17 @@ class TestEntryConsumer {
 
 describe('streaming logger', () => {
   test('streams all messages to all consumers', () => {
-    const testConsumer1 = new TestEntryConsumer((entry) => levelClearsTreshold(LogLevel.Critical, getEntryLevel(entry)))
+    const testConsumer1 = new TestEntryConsumer((entry) => levelClearsTreshold(LogLevel.CRITICAL, getEntryLevel(entry)))
     const testConsumer2 = new TestEntryConsumer()
     const logger = new StreamingLogger({ mytag: 'ccc' }, { test1: testConsumer1, test2: testConsumer2 })
     const messagesList = [
       {
-        tags: { [LogTagType.Level]: LogLevel.Critical },
+        tags: { [LogTagType.LEVEL]: LogLevel.CRITICAL },
         message: 'aaa',
         params: {},
       },
       {
-        tags: { [LogTagType.Level]: LogLevel.Debug },
+        tags: { [LogTagType.LEVEL]: LogLevel.DEBUG },
         message: 'bbb',
         params: {},
       },
